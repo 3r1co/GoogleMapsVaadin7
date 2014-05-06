@@ -149,6 +149,8 @@ public class GoogleMapConnector extends AbstractComponentConnector implements
         if (stateChangeEvent.hasPropertyChanged("kmlLayers") || initial) {
             getWidget().setKmlLayers(getState().kmlLayers);
         }
+            
+        
         if (stateChangeEvent.hasPropertyChanged("mapTypeId") || initial) {
             getWidget().setMapType(getState().mapTypeId);
         }
@@ -199,6 +201,8 @@ public class GoogleMapConnector extends AbstractComponentConnector implements
         if (initial) {
             getWidget().triggerResize();
         }
+        
+        getWidget().setHeatLayers(getState().heatLayers);
 
     }
 
@@ -225,6 +229,7 @@ public class GoogleMapConnector extends AbstractComponentConnector implements
         getWidget().setPolygonOverlays(getState().polygons);
         getWidget().setPolylineOverlays(getState().polylines);
         getWidget().setKmlLayers(getState().kmlLayers);
+        getWidget().setHeatLayers(getState().heatLayers);
         getWidget().setInfoWindows(getState().infoWindows.values());
         getWidget().setMapType(getState().mapTypeId);
         getWidget().setControls(getState().controls);

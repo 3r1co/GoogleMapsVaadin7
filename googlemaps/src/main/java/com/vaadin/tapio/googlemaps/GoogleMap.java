@@ -13,6 +13,7 @@ import com.vaadin.tapio.googlemaps.client.events.MapClickListener;
 import com.vaadin.tapio.googlemaps.client.events.MapMoveListener;
 import com.vaadin.tapio.googlemaps.client.events.MarkerClickListener;
 import com.vaadin.tapio.googlemaps.client.events.MarkerDragListener;
+import com.vaadin.tapio.googlemaps.client.layers.GoogleMapHeatLayer;
 import com.vaadin.tapio.googlemaps.client.layers.GoogleMapKmlLayer;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapInfoWindow;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
@@ -490,6 +491,26 @@ public class GoogleMap extends com.vaadin.ui.AbstractComponent {
      */
     public void addKmlLayer(GoogleMapKmlLayer kmlLayer) {
         getState().kmlLayers.add(kmlLayer);
+    }
+
+    /**
+     * Removes a Heat layer from the map.
+     * 
+     * @param heatLayer
+     *            The Heat layer to remove.
+     */
+    public void removeHeatLayer(GoogleMapHeatLayer heatLayer) {
+        getState().heatLayers.remove(heatLayer);
+    }
+    
+    /**
+     * Adds a Heat layer to the map.
+     * 
+     * @param heatLayer
+     *            The KML layer to add.
+     */
+    public void addHeatLayer(GoogleMapHeatLayer heatLayer) {
+        getState().heatLayers.add(heatLayer);
     }
 
     /**

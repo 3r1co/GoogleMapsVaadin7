@@ -10,6 +10,9 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.maps.gwt.client.Animation;
 import com.google.maps.gwt.client.GoogleMap;
+import com.google.maps.gwt.client.ImageMapType;
+import com.google.maps.gwt.client.ImageMapTypeOptions;
+import com.google.maps.gwt.client.ImageMapTypeOptions.Callback;
 import com.google.maps.gwt.client.InfoWindow;
 import com.google.maps.gwt.client.InfoWindowOptions;
 import com.google.maps.gwt.client.KmlLayer;
@@ -18,10 +21,12 @@ import com.google.maps.gwt.client.LatLng;
 import com.google.maps.gwt.client.LatLngBounds;
 import com.google.maps.gwt.client.MVCArray;
 import com.google.maps.gwt.client.MapOptions;
+import com.google.maps.gwt.client.MapType;
 import com.google.maps.gwt.client.MapTypeId;
 import com.google.maps.gwt.client.Marker;
 import com.google.maps.gwt.client.MarkerOptions;
 import com.google.maps.gwt.client.MouseEvent;
+import com.google.maps.gwt.client.Point;
 import com.google.maps.gwt.client.Polygon;
 import com.google.maps.gwt.client.PolygonOptions;
 import com.google.maps.gwt.client.Polyline;
@@ -32,6 +37,8 @@ import com.vaadin.tapio.googlemaps.client.events.MapClickListener;
 import com.vaadin.tapio.googlemaps.client.events.MapMoveListener;
 import com.vaadin.tapio.googlemaps.client.events.MarkerClickListener;
 import com.vaadin.tapio.googlemaps.client.events.MarkerDragListener;
+import com.vaadin.tapio.googlemaps.client.layers.CustomImageMapType;
+import com.vaadin.tapio.googlemaps.client.layers.GoogleMapHeatLayer;
 import com.vaadin.tapio.googlemaps.client.layers.GoogleMapKmlLayer;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapInfoWindow;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
@@ -49,7 +56,8 @@ public class GoogleMapWidget extends FlowPanel implements RequiresResize {
     private Map<Polyline, GoogleMapPolyline> polylineMap = new HashMap<Polyline, GoogleMapPolyline>();
     private Map<InfoWindow, GoogleMapInfoWindow> infoWindowMap = new HashMap<InfoWindow, GoogleMapInfoWindow>();
     private Map<KmlLayer, GoogleMapKmlLayer> kmlLayerMap = new HashMap<KmlLayer, GoogleMapKmlLayer>();
-    private MarkerClickListener markerClickListener = null;
+    private Map<CustomImageMapType, GoogleMapHeatLayer> heatLayerMap = new HashMap<CustomImageMapType, GoogleMapHeatLayer>();
+	private MarkerClickListener markerClickListener = null;
     private MarkerDragListener markerDragListener = null;
     private InfoWindowClosedListener infoWindowClosedListener = null;
 
@@ -439,7 +447,27 @@ public class GoogleMapWidget extends FlowPanel implements RequiresResize {
         }
     }
 
-    public void setMapType(String mapTypeId) {
+    	public void setHeatLayers(Collection<GoogleMapHeatLayer> layers) {
+
+		heatLayerMap.clear();
+		for (final GoogleMapHeatLayer layer : layers) {
+			ImageMapTypeOptions options = ImageMapTypeOptions.create();
+			options.setGetTileUrl(new Callback() {
+				@Override
+				public String handle(Point a, double b) {
+					return layer.getUrl(a, b);
+				}
+			});
+			map.getOverlayMapTypes().removeAt(0);
+			options.setTileSize(Size.create(256, 256));
+			CustomImageMapType heatLayer = CustomImageMapType.create(options);
+			map.getOverlayMapTypes().insertAt(0, heatLayer);
+			heatLayerMap.put(heatLayer, layer);
+
+		}
+	}
+
+	public void setMapType(String mapTypeId) {
         mapOptions.setMapTypeId(MapTypeId.fromValue(mapTypeId.toLowerCase()));
         map.setOptions(mapOptions);
     }
